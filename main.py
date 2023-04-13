@@ -54,6 +54,7 @@ class MyThread(Thread):
                 remain_list[self.th_index - 2] = remaining_eth
                 print("Remaining ETH", self.th_index, ":", remaining_eth)
             except:
+                self._stop_event.set()
                 print("error occured")
                 return
 
