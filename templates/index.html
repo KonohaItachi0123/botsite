@@ -132,6 +132,7 @@
         $.get("/stop/", function (response) {
           clearInterval(interval_timer);
           if (response == "success") {
+            console.log("disconnected");
             alert("all sell processes are stopped");
             $("table tr:not(:first)").remove();
           } else alert("something went wrong");
