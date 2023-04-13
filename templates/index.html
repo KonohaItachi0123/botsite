@@ -1,0 +1,220 @@
+<html lang="en">
+  <head>
+    <title>Selling Bot</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <div class="container pt-3 my-5 border">
+      <h5 class="mb-4">Please enter the your api information</h5>
+      <div class="input-group mb-3">
+        <span class="input-group-text" style="width: 120px">API KEY</span>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="API KEY"
+          id="api_key"
+        />
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text" style="width: 120px">SECRET KEY</span>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="SECRET KEY"
+          id="api_secret_key"
+        />
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text" style="width: 120px">PASSWORD</span>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="PASSWORD"
+          id="api_password"
+        />
+      </div>
+    </div>
+    <div class="container pt-3">
+      <div class="row">
+        <div class="col-md-4">
+          <h5 class="mb-4">Please enter the your selling information</h5>
+          <div class="input-group mb-3">
+            <span class="input-group-text" style="width: 150px"
+              >MIN VALUE(USD)</span
+            >
+            <input
+              type="number"
+              class="form-control"
+              placeholder="MIN SELLING VALUE"
+              id="min_val"
+            />
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text" style="width: 150px"
+              >MAX VALUE(USD)</span
+            >
+            <input
+              type="number"
+              class="form-control"
+              placeholder="MAX SELLING VALUE"
+              id="max_val"
+            />
+          </div>
+
+          <div class="input-group mb-3">
+            <span class="input-group-text" style="width: 150px"
+              >INTERVAL TIME(S)</span
+            >
+            <input
+              type="number"
+              class="form-control"
+              placeholder="THE SELLING TIME "
+              id="interval_time"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="cars">MARKETING SYMBOL:</label>
+            <select id="cars">
+              <option value="ETH/USDT">ETH/USDT</option>
+              <option value="BTC/USDT">BTC/USDT</option>
+            </select>
+          </div>
+
+          <button type="button" class="btn btn-primary" id="btn_start">
+            Start
+          </button>
+          <button type="button" class="btn btn-primary" id="btn_stop">
+            Stop
+          </button>
+          <button type="button" class="btn btn-primary" id="btn_test">
+            Test
+          </button>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-7">
+          <table class="table table-striped">
+            <thead class="table-dark">
+              <tr>
+                <th>MIN_VALUE</th>
+                <th>MAX_VALUE</th>
+                <th>INTERVAL_TIME</th>
+                <th>MARKET SYMBOL</th>
+                <th>REMAIN</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <script>
+      const getStatusdata = () => {
+        $.get("/getremain/", function (response) {
+          for (let i = 0; i < response.length; i++) {
+            $("table tr:eq(" + (i + 1) + ") td:eq(4)").text(response[i]);
+            console.log(response[i]);
+          }
+        });
+      };
+
+      let interval_timer = null;
+
+      $("#btn_stop").click(function () {
+        $.get("/stop/", function (response) {
+          clearInterval(interval_timer);
+          if (response == "success") {
+            alert("all sell processes are stopped");
+            $("table tr:not(:first)").remove();
+          } else alert("something went wrong");
+        });
+      });
+
+      $("#btn_test").click(function () {
+        // $("table tr:eq(1) td:eq(1)").text("New value");
+        var selectedCar = $("#cars").children("option:selected").val();
+        alert("You have selected the car - " + selectedCar);
+      });
+
+      $("#btn_start").click(function () {
+        const api_key = $("#api_key").val();
+        const secret_key = $("#api_secret_key").val();
+        const api_password = $("#api_password").val();
+        const min_val = $("#min_val").val();
+        const max_val = $("#max_val").val();
+        const marketing_symbol = $("#cars").children("option:selected").val();
+        const interval_time = $("#interval_time").val();
+
+        if (
+          api_key == "" ||
+          secret_key == "" ||
+          api_password == "" ||
+          min_val == "" ||
+          max_val == "" ||
+          interval_time == ""
+        ) {
+          alert("your informations is missing");
+          return;
+        }
+
+        const data = {
+          api_key: api_key,
+          secret_key: secret_key,
+          api_password: api_password,
+          min_val: min_val,
+          max_val: max_val,
+          interval_time: interval_time,
+          marketing_symbol: marketing_symbol,
+        };
+
+        $.ajax({
+          type: "POST",
+          contentType: "application/json; charset=utf-8",
+          url: "/register/",
+          data: JSON.stringify(data),
+          success: function (data) {
+            if (data == "success") {
+              console.log("success connected");
+              var tableBody = $("tbody");
+
+              // create a new row
+              var newRow = $("<tr>");
+
+              // create new cells and add them to the row
+              var nameCell = $("<td>").text(min_val);
+              var ageCell = $("<td>").text(max_val);
+              var genderCell = $("<td>").text(interval_time);
+              var intervalCell = $("<td>").text(marketing_symbol);
+              var reaminCell = $("<td>").text("_");
+              var statusCell = $("<td>").text("progressive");
+
+              newRow.append(
+                nameCell,
+                ageCell,
+                genderCell,
+                intervalCell,
+                reaminCell,
+                statusCell
+              );
+
+              // add the new row to the table body
+              tableBody.append(newRow);
+              if (!interval_timer)
+                interval_timer = setInterval(getStatusdata, 5000);
+            } else if (data == "repeat") alert("repeat information is entered");
+            else alert("api information is incorrect");
+          },
+          dataType: "json",
+        });
+      });
+    </script>
+  </body>
+</html>
