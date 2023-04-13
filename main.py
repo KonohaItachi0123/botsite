@@ -45,7 +45,7 @@ class MyThread(Thread):
                 sell_amount = rand_amount / e_rate['close']
 
                 self.exchange.create_order(
-                    self.symbol_val, 'market', 'sell', 0.01)
+                    self.symbol_val, 'market', 'sell', sell_amount)
 
                 balance = self.exchange.fetch_balance()
 
@@ -115,7 +115,7 @@ async def startdata(item: Item):
         'enableRateLimit': True,
     })
 
-    exchange.set_sandbox_mode(True)
+    # exchange.set_sandbox_mode(True)
 
     try:
 

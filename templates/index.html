@@ -125,6 +125,12 @@
       </div>
     </div>
     <script>
+      $.get("/stop/", function (response) {
+        if (response == "success") {
+          console.log("cleard");
+        } else alert("something went wrong");
+      });
+
       const getStatusdata = () => {
         $.get("/getremain/", function (response) {
           for (let i = 0; i < response.length; i++) {
