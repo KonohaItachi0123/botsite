@@ -15,7 +15,8 @@ thread_list = []
 
 api_list = []
 
-remain_list = []
+
+data_array = []
 # class thread
 
 
@@ -51,9 +52,11 @@ class MyThread(Thread):
 
                 remaining_eth = balance[self.symbol_val.split("/")[0]]['free']
 
-                remain_list[self.th_index - 2] = remaining_eth
+                data_array[self.th_index - 1]["remain"] = remaining_eth
+
                 print("Remaining ETH", self.th_index, ":", remaining_eth)
             except:
+                data_array[self.th_index - 2]["status"] = "failed"
                 self._stop_event.set()
                 print("error occured")
                 return
@@ -81,6 +84,12 @@ async def init_view(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
+@app.get("/getinit")
+async def init_statue():
+
+    return data_array
+
+
 @app.get("/testsocket")
 async def init_message():
 
@@ -90,7 +99,7 @@ async def init_message():
 @app.get("/getremain")
 async def init_message():
 
-    return remain_list
+    return data_array
 
 
 @app.get("/stop/")
@@ -100,7 +109,7 @@ async def stop_sell():
             c.stop()
         thread_list.clear()
         api_list.clear()
-        remain_list.clear()
+        data_array.clear()
         return "success"
     except:
         return "failed"
@@ -128,9 +137,10 @@ async def startdata(item: Item):
                      password=item.api_password, exchange=exchange)
         t.start()
 
+        data_array.append({"min_val": item.min_val, "max_val": item.max_val,
+                          "interval_time": item.interval_time, "market_symbol": item.marketing_symbol, "remain": 0, "status": "progressive"})
         thread_list.append(t)
         api_list.append(item.api_key)
-        remain_list.append(0)
 
         return "success"
     except:
