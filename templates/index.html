@@ -63,7 +63,7 @@
             <input
               type="number"
               class="form-control"
-              placeholder="MAX SELLING VALUe"
+              placeholder="MAX SELLING VALUE"
               id="max_val"
             />
           </div>
@@ -130,7 +130,7 @@
       </div>
     </div>
     <script>
-      $.get("/getinit", function (response) {
+      $.get("/getremain", function (response) {
         for (let j = 0; j < response.length; j++) {
           const tableBody = $("tbody");
 
