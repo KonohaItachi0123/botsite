@@ -130,7 +130,7 @@
       </div>
     </div>
     <script>
-      $.get("/getinit/", function (response) {
+      $.get("/getinit", function (response) {
         for (let j = 0; j < response.length; j++) {
           const tableBody = $("tbody");
 
@@ -159,7 +159,7 @@
       });
 
       const getStatusdata = () => {
-        $.get("/getremain/", function (response) {
+        $.get("/getremain", function (response) {
           const length_response = response.length;
           if (length_response == 0) return;
           for (let i = 0; i < response.length; i++) {
@@ -177,7 +177,7 @@
       let interval_timer = setInterval(getStatusdata, 5000);
 
       $("#btn_stop").click(function () {
-        $.get("/stop/", function (response) {
+        $.get("/stop", function (response) {
           if (response == "success") {
             console.log("disconnected");
             alert("all sell processes are stopped");
@@ -226,7 +226,7 @@
         $.ajax({
           type: "POST",
           contentType: "application/json; charset=utf-8",
-          url: "/register/",
+          url: "/register",
           data: JSON.stringify(data),
           success: function (data) {
             if (data == "success") {

@@ -105,7 +105,7 @@ async def init_message():
     return data_array
 
 
-@app.get("/stop/")
+@app.get("/stop")
 async def stop_sell():
     try:
         for c in thread_list:
