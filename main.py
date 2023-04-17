@@ -32,7 +32,7 @@ class MyThread(Thread):
         self.secret_key = secret_key
         self.password = password
         self.exchange = exchange
-        self.th_index = len(thread_list) + 1
+        self.th_index = len(thread_list)
         self._stop_event = Event()
 
     def stop(self):
@@ -52,12 +52,15 @@ class MyThread(Thread):
 
                 remaining_eth = balance[self.symbol_val.split("/")[0]]['free']
 
-                data_array[self.th_index - 1]["remain"] = remaining_eth
+                data_array[self.th_index]["remain"] = remaining_eth
 
                 print("Remaining ETH", self.th_index, ":", remaining_eth)
             except:
-                data_array[self.th_index - 2]["status"] = "failed"
+                data_array.pop(self.th_index)
+                api_list.pop(self.th_index)
+                thread_list.pop(self.th_index)
                 self._stop_event.set()
+
                 print("error occured")
                 return
 
@@ -130,7 +133,7 @@ async def startdata(item: Item):
 
         if item.api_key in api_list:
             return "repeat"
-        exchange.fetch_balance()
+        exchange.fetch_ticker(item.marketing_symbol)
         t = MyThread(min_val=item.min_val, max_val=item.max_val,
                      interval_val=item.interval_time, symbol_val=item.marketing_symbol,
                      api_key=item.api_key, secret_key=item.secret_key,
