@@ -158,6 +158,8 @@
         }
       });
 
+      let interval_timer = setInterval(getStatusdata, 5000);
+
       const getStatusdata = () => {
         $.get("/getremain", function (response) {
           const length_response = response.length;
@@ -173,8 +175,6 @@
           }
         });
       };
-
-      let interval_timer = setInterval(getStatusdata, 5000);
 
       $("#btn_stop").click(function () {
         $.get("/stop", function (response) {

@@ -40,6 +40,7 @@ class MyThread(Thread):
 
     def run(self):
         while not self._stop_event.is_set():
+            global data_array, api_list, thread_list
             try:
                 e_rate = self.exchange.fetch_ticker(self.symbol_val)
                 rand_amount = random.randint(self.min_val, self.max_val)
@@ -79,24 +80,9 @@ class Item(BaseModel):
     marketing_symbol: str
 
 
-time_se = True
-
-
 @app.get("/")
 async def init_view(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
-
-
-@app.get("/getinit")
-async def init_statue():
-
-    return data_array
-
-
-@app.get("/testsocket")
-async def init_message():
-
-    return "sfdsd"
 
 
 @app.get("/getremain")
@@ -107,6 +93,7 @@ async def init_message():
 
 @app.get("/stop")
 async def stop_sell():
+    global data_array, api_list, thread_list
     try:
         for c in thread_list:
             c.stop()
@@ -139,7 +126,7 @@ async def startdata(item: Item):
                      api_key=item.api_key, secret_key=item.secret_key,
                      password=item.api_password, exchange=exchange)
         t.start()
-
+        global data_array, thread_list, api_list
         data_array.append({"min_val": item.min_val, "max_val": item.max_val,
                           "interval_time": item.interval_time, "market_symbol": item.marketing_symbol, "remain": 0, "status": "progressive"})
         thread_list.append(t)
