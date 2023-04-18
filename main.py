@@ -117,7 +117,7 @@ async def startdata(item: Item):
     # exchange.set_sandbox_mode(True)
 
     try:
-
+        global data_array, thread_list, api_list
         if item.api_key in api_list:
             return "repeat"
         exchange.fetch_ticker(item.marketing_symbol)
@@ -126,7 +126,7 @@ async def startdata(item: Item):
                      api_key=item.api_key, secret_key=item.secret_key,
                      password=item.api_password, exchange=exchange)
         t.start()
-        global data_array, thread_list, api_list
+
         data_array.append({"min_val": item.min_val, "max_val": item.max_val,
                           "interval_time": item.interval_time, "market_symbol": item.marketing_symbol, "remain": 0, "status": "progressive"})
         thread_list.append(t)
