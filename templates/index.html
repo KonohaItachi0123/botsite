@@ -130,7 +130,8 @@
       </div>
     </div>
     <script>
-      $.get("/getremain", function (response) {
+      let tablesetting = false;
+      const setTable = (response) => {
         for (let j = 0; j < response.length; j++) {
           const tableBody = $("tbody");
 
@@ -155,13 +156,21 @@
 
           // add the new row to the table body
           tableBody.append(newRow);
+          tablesetting = true;
         }
+      };
+
+      $.get("/getremain", function (response) {
+        const length_response = response.length;
+        if (length_response == 0) return;
+        setTable(response);
       });
 
       const getStatusdata = () => {
         $.get("/getremain", function (response) {
           const length_response = response.length;
           if (length_response == 0) return;
+          if (!tablesetting) setTable(response);
           for (let i = 0; i < response.length; i++) {
             console.log(response);
             $("table tr:eq(" + (i + 1) + ") td:eq(4)").text(
