@@ -15,7 +15,6 @@ thread_list = []
 
 api_list = []
 
-
 data_array = []
 # class thread
 
@@ -81,18 +80,18 @@ class Item(BaseModel):
 
 
 @app.get("/")
-async def init_view(request: Request):
+def init_view(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.get("/getremain")
-async def init_message():
+def init_message():
 
     return data_array
 
 
 @app.get("/stop")
-async def stop_sell():
+def stop_sell():
     global data_array, api_list, thread_list
     try:
         for c in thread_list:
@@ -106,7 +105,7 @@ async def stop_sell():
 
 
 @app.post("/register")
-async def startdata(item: Item):
+def startdata(item: Item):
     exchange = ccxt.kucoin({
         'apiKey': item.api_key,
         'secret': item.secret_key,
